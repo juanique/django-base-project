@@ -1,0 +1,19 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <script type='text/javascript' src='{{MEDIA_URL}}js/lib/jquery-1.7.1.js'></script>
+        <script type='text/javascript' src='{{MEDIA_URL}}js/lib/underscore.js'></script>
+        <script type='text/javascript' src='{{MEDIA_URL}}js/lib/backbone.js'></script>
+        <script type='text/javascript' src='{{MEDIA_URL}}js/lib/require.js'></script>
+        <script type='text/javascript'>
+            require.config({
+                baseUrl: "{{MEDIA_URL}}js/"
+            })
+        </script>
+    </head>
+
+    <body>
+        {% block content %}
+        {% endblock %}
+    </body>
+</html>

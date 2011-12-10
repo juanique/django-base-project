@@ -1,5 +1,7 @@
+
 from django.conf.urls.defaults import patterns, include, url
-from views import authenticate
+import views
 
 urlpatterns = patterns('',
+        (r'^$', views.home)
 )

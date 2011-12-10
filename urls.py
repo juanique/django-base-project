@@ -2,25 +2,30 @@ from django.conf.urls.defaults import patterns, include, url
 from api.resources import Api
 from jsonrpc import jsonrpc_site
 import api.rpc
+import settings
 
 # Uncomment the next two lines to enable the admin:
-# from django.contrib import admin
-# admin.autodiscover()
+from django.contrib import admin
+admin.autodiscover()
 api = Api()
 
 urlpatterns = patterns('',
-        (r'^api/services/', include('api.urls')),
-        (r'^api/rpc-browse/$', 'jsonrpc.views.browse'),
+        #(r'^api/services/', include('api.urls')),
         (r'^api/rpc/$', jsonrpc_site.dispatch),
         (r'^api/',include(api.urls)),
 
-    # Examples:
-    # url(r'^$', 'adedo.views.home', name='home'),
-    # url(r'^adedo/', include('adedo.foo.urls')),
+        url(r'^admin/', include(admin.site.urls)),
+)
 
-    # Uncomment the admin/doc line below to enable admin documentation:
-    # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
+if settings.DEBUG:
+    urlpatterns += patterns('',
+            (r'^'+settings.MEDIA_URL+'(?P<path>.*)$', 
+               'django.views.static.serve', 
+               {'document_root': settings.MEDIA_ROOT}),
+            (r'^api/rpc-browse/$', 'jsonrpc.views.browse'),
+        url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
+    )
 
-    # Uncomment the next line to enable the admin:
-    # url(r'^admin/', include(admin.site.urls)),
+urlpatterns += patterns('',
+        (r'^',include('frontend.urls'))
 )
