@@ -1,0 +1,21 @@
+#!/bin/bash
+
+dbname=`python -c"from settings import *; print DATABASES['default']['NAME']"`
+dbuser=`python -c"from settings import *; print DATABASES['default']['USER']"`
+dbpass=`python -c"from settings import *; print DATABASES['default']['PASSWORD']"`
+
+read -p "Enter MySQL root password: " -s pass
+
+q="GRANT USAGE ON $dbname.* TO '$dbuser'@'localhost';"
+q0="DROP USER $dbuser@localhost;"
+q1="DROP DATABASE IF EXISTS $dbname;"
+q2="FLUSH PRIVILEGES;"
+q3="CREATE USER '$dbuser'@'localhost' IDENTIFIED BY '$dbpass';"
+q4="CREATE DATABASE $dbname;"
+q5="GRANT ALL ON $dbname.* TO '$dbuser'@'localhost' WITH GRANT OPTION;"
+q6="FLUSH PRIVILEGES;"
+
+SQL="$q $q0 $q1 $q2 $q3 $q4 $q5 $q6"
+echo $SQL
+
+mysql --user=root --password=$pass -e "$SQL" mysql

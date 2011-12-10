@@ -1,0 +1,30 @@
+#!/bin/bash
+
+function add_import {
+    imported_file=$1
+
+    import_lines=`grep "from $imported_file import *" settings.py | wc -l`
+
+    if [ "$import_lines" -eq "1" ]; then
+        echo "Current settings.py file already imports $imported_file."
+    else
+        import="try:
+    from $imported_file import *
+except ImportError, exp:
+    pass"
+
+        echo "$import" >> settings.py
+        echo "Adding import $imported_file statement to settings.py."
+    fi
+
+    if [ -f "$imported_file.py" ]; then
+        echo "$imported_file.py file already exists."
+    else
+        echo "Creating $imported_file.py file."
+        touch "$imported_file.py"
+    fi
+
+}
+
+add_import local_settings
+add_import local_databases
