@@ -1,5 +1,5 @@
-# Django settings for adedo project.
 import os
+import sys
 import django
 
 DEBUG = True
@@ -8,6 +8,8 @@ TEMPLATE_DEBUG = DEBUG
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
 )
+
+TEST = 'test' in sys.argv
 
 MANAGERS = ADMINS
 
@@ -106,7 +108,7 @@ MIDDLEWARE_CLASSES = (
     'middleware.CoffeeScriptMiddleWare',
 )
 
-ROOT_URLCONF = 'adedo.urls'
+ROOT_URLCONF = 'urls'
 
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
@@ -162,6 +164,18 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 
 try:
     from local_settings import *
-    from local_databases import *
+    if TEST:
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': ':memory:',
+                'HOST': '',
+                'USER': '',
+                'PASSWORD': '',
+                'PORT': ''
+             }
+        }
+    else:
+        from local_databases import *
 except ImportError, exp:
     pass

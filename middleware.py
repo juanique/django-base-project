@@ -18,8 +18,8 @@ class CoffeeScriptMiddleWare:
         return out
 
     def render_response(self, request,response):
-        if not request.is_ajax():
-            response = response.replace("\n","<br>\n")
+        #if not request.is_ajax():
+        #    response = response.replace("\n","<br>\n")
         return response
 
     def process_request(self, request):

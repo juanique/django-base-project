@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 
+{% block extra_head %}
+    <script type='text/javascript' src='{{MEDIA_URL}}js/views/home.js'></script>
+{% endblock %}
+
 {% block content %}
 
     <h1>Home</h1>
