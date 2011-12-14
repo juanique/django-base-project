@@ -7,6 +7,9 @@ Replace this with more appropriate tests for your application.
 
 from django.test import TestCase
 from resources import FieldsValidation
+from jsonrpc.proxy import ServiceProxy
+from django.test import Client
+import json
 
 
 class SimpleTest(TestCase):
@@ -76,6 +79,65 @@ class FieldsValidationTest(TestCase):
 
         self.assertEqual(expected_validated, validation.validated_fields)
         self.assertEqual(expected_required, validation.required_fields)
+
+class TestUserResource(TestCase):
+    def setUp(self):
+        self.user_data = {
+            "username":"godinez5",
+            "password":"mypassword",
+            "first_name" : "juanelo", 
+            "last_name" : "godinez", 
+            "email" : "juanelo@godinez.cl"
+        }
+
+    def test_missing_email(self):
+        client = Client()
+        del self.user_data['email']
+        post_response = client.post('/api/resources/user/',
+                json.dumps(self.user_data), 
+                'application/json')
+        self.assertEqual(400, post_response.status_code) # 400: CLIENT ERROR
+        response_dict = json.loads(post_response.content)
+        self.assertEqual(['email'], response_dict.keys())
+
+    def test_missing_password(self):
+        client = Client()
+        del self.user_data['password']
+        post_response = client.post('/api/resources/user/',
+                json.dumps(self.user_data), 
+                'application/json')
+        self.assertEqual(400, post_response.status_code) # 400: CLIENT ERROR
+        response_dict = json.loads(post_response.content)
+        self.assertEqual(['password'], response_dict.keys())
+
+    
+    def test_get_post(self):
+        client = Client()
+        post_response = client.post('/api/resources/user/',
+                json.dumps(self.user_data), 
+                'application/json')
+        self.assertEqual(201, post_response.status_code) # 201: CREATED
+        get_response = client.get('/api/resources/user/')
+
+        response_dict = json.loads(get_response.content)
+        self.assertEqual(1, response_dict['meta']['total_count'])
+
+        expected = dict(self.user_data)
+        del expected['password']
+        del expected['email']
+        self.assertDictContainsSubset(expected, response_dict['objects'][0])
+
+
+
+
+'''
+class TestAuthenticationRPC(TestCase):
+
+    def test_valid_authentication(self):
+        rpc = ServiceProxy('http://localhost:8000/api/rpc/')
+        rpc.authenticate(
+'''
+
 
 
 

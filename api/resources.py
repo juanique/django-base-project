@@ -60,11 +60,15 @@ class UserResource(ModelResource):
         user.is_active = True
         user.is_superuser = False
         user.save()
+        bundle.obj = user
 
         return bundle
 
     def dehydrate_password(self, bundle):
         return 'PRIVATE'
+
+    def wrap_view(self, view):
+        return super(UserResource, self).wrap_view(view)
 
 
 class Api:
