@@ -20,3 +20,7 @@ class Breed(models.Model):
 		return self.name
 		
 # Missing Pet Profile
+
+# Create your models here.
+class UserProfile(models.Model):
+    facebook_id = models.CharField(max_length=32)
