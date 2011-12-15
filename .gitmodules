@@ -1,0 +1,3 @@
+[submodule "lib/django-tastypie"]
+	path = lib/django-tastypie
+	url = git@github.com:klooff/klooff-django.git
