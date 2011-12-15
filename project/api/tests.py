@@ -177,6 +177,7 @@ class TestDummy(TestCase):
         request = Dummy()
         request.method="POST"
         request.raw_post_data = json.dumps(user_res._meta.examples['POST'])
+        request.path = "/api/resources/user/"
 
         response = dummy_res.post(request)
         self.assertEqual(201, response.status_code)

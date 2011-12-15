@@ -51,9 +51,11 @@ class KlooffUser(object):
 
 class KlooffUserResource(Resource):
     uid=fields.CharField(attribute='uid')
+    
     class Meta:
         resource_name='KlooffUser'
         authorization = Authorization()
+
     def get_resource_uri(self,bundle_or_obj):
         kwargs = {}
         kwargs['resource_name'] = self._meta.resource_name
@@ -87,6 +89,22 @@ class UserResource(ModelResource):
         authorization = Authorization()
         validation = UserValidation()
         fields = ['id','username','first_name','last_name','last_login']
+        examples = {
+                'POST' : {
+                    "username":"juanique",
+                    "first_name" : "Juan",
+                    "last_name" : "Munoz",
+                    "email" : "juanique@gmail.com",
+                    "password" : "123456"
+                },
+                'GET' : {
+                    "username":"juanique",
+                    "first_name" : "Juan",
+                    "last_name" : "Munoz",
+                    "email" : "juanique@gmail.com",
+
+                }
+        }
         #excludes =['email','password','is_active','is_staff','is_superuser']
 
     def obj_create(self, bundle, request=None, **kwargs):
