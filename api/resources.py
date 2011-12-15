@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from tastypie.resources import ModelResource
+from tastypie.resources import ModelResource, Resource
 from tastypie.serializers import Serializer
 from tastypie.authorization import Authorization
 from tastypie import fields
@@ -36,6 +36,23 @@ class UserValidation(FieldsValidation):
             return True, ""
         return True, ""
 
+class KlooffUser(object):
+    def get_data(data):
+        pass
+class KlooffUserResource(Resource):
+    uid=fields.CharField(attribute='uid')
+    class Meta:
+        resource_name='KlooffUser'
+        object_class = KlooffUser
+        authorization = Authorization()
+    def get_resource_uri(self,bundle_or_obj):
+        kwargs = {}
+        kwargs['resource_name'] = self._meta.resource_name
+        if isinstance(bundle_or_obj,Bundle):
+            kwargs['pk'] = bundle_or_obj.obj.uid
+        else:
+            kwargs['pk'] = bundle_or_obj.uid
+        return self._build_reverse_url("api_dispatch_detail",kwargs)
 
 class UserResource(ModelResource):
     username = fields.CharField(attribute='username', unique=True)
