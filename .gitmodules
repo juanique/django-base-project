@@ -1,3 +1,6 @@
 [submodule "lib/django-tastypie"]
 	path = lib/django-tastypie
 	url = git@github.com:klooff/klooff-django.git
+[submodule "lib/django-json-rpc"]
+	path = lib/django-json-rpc
+	url = https://github.com/samuraisam/django-json-rpc.git
