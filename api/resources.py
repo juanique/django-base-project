@@ -11,10 +11,10 @@ import json
 class UserValidation(FieldsValidation):
 
     def __init__(self):
-        super(UserValidation, self).__init__(required=['username','first_name','last_name'],
-                                             validated=['username'],
-                                             required_post = ['email', 'password'],
-                                             validated_post = ['password'],
+        super(UserValidation, self).__init__( required=['username','first_name','last_name'],
+                                              validated=['username'],
+                                              required_post = ['email', 'password'],
+                                              validated_post = ['password'],
                                             )
 
     @staticmethod
@@ -27,6 +27,7 @@ class UserValidation(FieldsValidation):
     def username_is_valid(username, bundle):
         try:
             user = User.objects.get(username=username)
+            print bundle.data
 
             if user is not None and str(user.id) != str(bundle.data.get('id',0)):
                 return False, "The username is already taken."
@@ -36,13 +37,21 @@ class UserValidation(FieldsValidation):
         return True, ""
 
 class KlooffUser(object):
-    def get_data(data):
-        pass
+    def __init__(self,initial=None):
+        self.__dict__['data'] = {}
+        if hasattr(initial, 'items'):
+            self,__dict__['data'] = initial
+    def __getattr__(self,name):
+        self._data.get(name,None)
+    def __setattr__(self,name,value):
+        self._data[name] = value
+    def to_dict():
+        return self._data
+
 class KlooffUserResource(Resource):
     uid=fields.CharField(attribute='uid')
     class Meta:
         resource_name='KlooffUser'
-        object_class = KlooffUser
         authorization = Authorization()
     def get_resource_uri(self,bundle_or_obj):
         kwargs = {}
@@ -51,7 +60,22 @@ class KlooffUserResource(Resource):
             kwargs['pk'] = bundle_or_obj.obj.uid
         else:
             kwargs['pk'] = bundle_or_obj.uid
-        return self._build_reverse_url("api_dispatch_detail",kwargs)
+        return self._build_reverse_url("api_dispatch_detail",**kwargs)
+    def get_object_list(self, request):
+        users=User.objects.all()
+        result=[]
+        result.append('test')
+        return result
+    def obj_get_list(self,request=None,**kwargs):
+        return self.get_object_list(request)
+    def obj_create(self, bundle, request=None, **kwargs):
+        bundle.obj=KlooffUser(initial=kwargs)
+        bundle=self.full_hydrate(bundle)
+        return bundle
+    def obj_get(self,request=None,**kwargs):
+        initial={}
+        initial.append(name='jia200x')
+        return KlooffUser(initial=initial)
 
 class UserResource(ModelResource):
     username = fields.CharField(attribute='username', unique=True)
@@ -61,24 +85,8 @@ class UserResource(ModelResource):
         allowed_methods = ['get','post','put']
         authorization = Authorization()
         validation = UserValidation()
-        fields = ['id','username','first_name','last_name']
+        fields = ['id','username','first_name','last_name','last_login']
         #excludes =['email','password','is_active','is_staff','is_superuser']
-        examples =  {
-                'POST' : {
-                    "username":"juanique",
-                    "first_name" : "Juan", 
-                    "last_name" : "Munoz", 
-                    "email" : "juanique@gmail.com",
-                    "password" : "123456"
-                },
-                'GET' : {
-                    "username":"juanique",
-                    "first_name" : "Juan", 
-                    "last_name" : "Munoz", 
-                    "email" : "juanique@gmail.com",
-
-                }
-        }
 
     def obj_create(self, bundle, request=None, **kwargs):
         bundle = self.full_hydrate(bundle)
@@ -107,7 +115,8 @@ class Api:
     def __init__(self):
         self.tastypieApi = TastypieApi(api_name='resources')
         self.resources = {
-            'user' : UserResource(),
+            'user' : UserResource(), 
+            'klooffuser' : KlooffUserResource(), 
         }
 
         self.registerResources()
