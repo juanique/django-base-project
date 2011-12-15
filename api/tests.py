@@ -6,9 +6,12 @@ Replace this with more appropriate tests for your application.
 """
 
 from django.test import TestCase
-from resources import FieldsValidation
+from django.http import HttpRequest
+from helpers import FieldsValidation
 from jsonrpc.proxy import ServiceProxy
 from django.test import Client
+from dummy import DummyResource, Dummy
+from resources import UserResource
 import json
 
 
@@ -120,9 +123,9 @@ class TestUserResource(TestCase):
                 json.dumps(self.user_data), 
                 'application/json')
         self.assertEqual(201, post_response.status_code) # 201: CREATED
-        get_response = client.get('/api/resources/user/')
 
         #test GET
+        get_response = client.get('/api/resources/user/')
         response_dict = json.loads(get_response.content)
         self.assertEqual(1, response_dict['meta']['total_count'])
 
@@ -138,6 +141,55 @@ class TestUserResource(TestCase):
         #print auth_response
 
 
+
+
+class TestDummy(TestCase):
+
+    def test_get(self):
+        user_res = UserResource()
+        dummy_res = DummyResource(user_res)
+        request = HttpRequest()
+        request.method="GET"
+
+        response = dummy_res.get(request)
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(user_res._meta.examples['GET'], json.loads(response.content))
+
+    def test_post(self):
+        user_res = UserResource()
+        dummy_res = DummyResource(user_res)
+        request = Dummy()
+        request.method="POST"
+        request.raw_post_data = json.dumps(user_res._meta.examples['POST'])
+
+        response = dummy_res.post(request)
+        self.assertEqual(201, response.status_code)
+        self.assertEqual("",response.content)
+
+
+class TestUserProfile(TestCase):
+
+    def test_resource(self):
+        client = Client()
+
+        user_data = dict(UserResource()._meta.examples['POST'])
+        user_data['facebook_id'] = 555
+
+        post_response = client.post('/api/resources/klooffuser/',
+                json.dumps(user_data),
+                'application/json')
+
+        self.assertEqual(post_response.status, 201)
+
+        get_response = client.get('/api/resources/klooffuser/')
+        response_dict = json.loads(get_response.content)
+
+        kloofuser_dict = response_dic['object'][0]
+        kloofuser_keys = kloofuser_dict.keys()
+
+        self.assertTrue('username' in kloofuser_keys)
+        self.assertTrue('facebook_id' in kloofuser_keys)
+        self.assertEqual(555, kloofuser_dict['facebook_id'])
 
 
 
