@@ -11,10 +11,10 @@ import json
 class UserValidation(FieldsValidation):
 
     def __init__(self):
-        super(UserValidation, self).__init__( required=['username','first_name','last_name'],
-                                              validated=['username'],
-                                              required_post = ['email', 'password'],
-                                              validated_post = ['password'],
+        super(UserValidation, self).__init__(required=['username','first_name','last_name'],
+                                             validated=['username'],
+                                             required_post = ['email', 'password'],
+                                             validated_post = ['password'],
                                             )
 
     @staticmethod
@@ -27,7 +27,6 @@ class UserValidation(FieldsValidation):
     def username_is_valid(username, bundle):
         try:
             user = User.objects.get(username=username)
-            print bundle.data
 
             if user is not None and str(user.id) != str(bundle.data.get('id',0)):
                 return False, "The username is already taken."
@@ -62,8 +61,24 @@ class UserResource(ModelResource):
         allowed_methods = ['get','post','put']
         authorization = Authorization()
         validation = UserValidation()
-        fields = ['id','username','first_name','last_name','last_login']
+        fields = ['id','username','first_name','last_name']
         #excludes =['email','password','is_active','is_staff','is_superuser']
+        examples =  {
+                'POST' : {
+                    "username":"juanique",
+                    "first_name" : "Juan", 
+                    "last_name" : "Munoz", 
+                    "email" : "juanique@gmail.com",
+                    "password" : "123456"
+                },
+                'GET' : {
+                    "username":"juanique",
+                    "first_name" : "Juan", 
+                    "last_name" : "Munoz", 
+                    "email" : "juanique@gmail.com",
+
+                }
+        }
 
     def obj_create(self, bundle, request=None, **kwargs):
         bundle = self.full_hydrate(bundle)
