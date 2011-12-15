@@ -11,10 +11,10 @@ import json
 class UserValidation(FieldsValidation):
 
     def __init__(self):
-        super(UserValidation, self).__init__( required=['username','first_name','last_name'],
-                                              validated=['username'],
-                                              required_post = ['email', 'password'],
-                                              validated_post = ['password'],
+        super(UserValidation, self).__init__(required=['username','first_name','last_name'],
+                                             validated=['username'],
+                                             required_post = ['email', 'password'],
+                                             validated_post = ['password'],
                                             )
 
     @staticmethod

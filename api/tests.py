@@ -109,16 +109,20 @@ class TestUserResource(TestCase):
         self.assertEqual(400, post_response.status_code) # 400: CLIENT ERROR
         response_dict = json.loads(post_response.content)
         self.assertEqual(['password'], response_dict.keys())
-
     
-    def test_get_post(self):
+    def test_post_get_authenticate(self):
+        '''Happy path test.'''
+
         client = Client()
+
+        #test POST
         post_response = client.post('/api/resources/user/',
                 json.dumps(self.user_data), 
                 'application/json')
         self.assertEqual(201, post_response.status_code) # 201: CREATED
         get_response = client.get('/api/resources/user/')
 
+        #test GET
         response_dict = json.loads(get_response.content)
         self.assertEqual(1, response_dict['meta']['total_count'])
 
@@ -126,6 +130,13 @@ class TestUserResource(TestCase):
         del expected['password']
         del expected['email']
         self.assertDictContainsSubset(expected, response_dict['objects'][0])
+
+        #test Authenticate
+        #rpc = ServiceProxy('http://localhost:8000/api/rpc/')
+        #auth_response = rpc.authenticate(username=self.user_data['username'], 
+        #        password=self.user_data['password'])
+        #print auth_response
+
 
 
 
