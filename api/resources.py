@@ -5,6 +5,7 @@ from tastypie.authorization import Authorization
 from tastypie import fields
 from tastypie.api import Api as TastypieApi
 from api.helpers import FieldsValidation
+from api.models import Pet
 import json
 
 
@@ -91,6 +92,7 @@ class Api:
         self.tastypieApi = TastypieApi(api_name='resources')
         self.resources = {
             'user' : UserResource(),
+            'pet'  : PetResource(),
         }
 
         self.registerResources()
@@ -108,3 +110,10 @@ class Api:
         bundle = resource.build_bundle(obj=obj, request=request)
         bundle = resource.full_dehydrate(bundle)
         return bundle.data
+
+class PetResource(ModelResource):
+    class Meta:
+        queryset = Pet.objects.all()
+        resource_name = 'pet'
+        fields = ['name']
+        #allowed_methods = ['get']

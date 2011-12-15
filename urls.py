@@ -1,5 +1,5 @@
 from django.conf.urls.defaults import patterns, include, url
-from api.resources import Api
+from api.resources import Api 
 from jsonrpc import jsonrpc_site
 import api.rpc
 import settings
