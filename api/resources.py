@@ -5,8 +5,8 @@ from tastypie.authorization import Authorization
 from tastypie import fields
 from tastypie.api import Api as TastypieApi
 from api.helpers import FieldsValidation
+import settings
 import json
-
 
 class UserValidation(FieldsValidation):
 
@@ -101,7 +101,19 @@ class Api:
 
     @property
     def urls(self):
-        return self.tastypieApi.urls
+        if settings.DUMMY_API:
+            from django.conf.urls.defaults import url, patterns
+            from dummy import DummyResource
+            
+            pattern_list =  []
+            for resource_name, resource in self.resources.items():
+                pattern_list.append(
+                        (r"^resources/%s/(\d*)/?$" % resource_name, DummyResource.get_view(resource)))
+
+            return patterns("",*pattern_list)
+        else:
+            return self.tastypieApi.urls
+
 
     def dehydrate(self,request, resource_name, obj):
         resource = self.resources[resource_name]

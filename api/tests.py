@@ -11,7 +11,7 @@ from helpers import FieldsValidation
 from jsonrpc.proxy import ServiceProxy
 from django.test import Client
 from dummy import DummyResource, Dummy
-from resources import UserResource
+from resources import UserResource, Api
 import json
 
 
@@ -83,6 +83,22 @@ class FieldsValidationTest(TestCase):
         self.assertEqual(expected_validated, validation.validated_fields)
         self.assertEqual(expected_required, validation.required_fields)
 
+class TestResources(TestCase):
+
+    def test_example_data(self):
+        api = Api()
+
+        for resource_name, resource in api.resources.items():
+            try:
+                get_example = resource._meta.examples['GET']
+            except KeyError:
+                self.assertTrue(False,"Missing example GET data for %s resource." % resource_name)
+            try:
+                get_example = resource._meta.examples['POST']
+            except KeyError:
+                self.assertTrue(False,"Missing example POST data for %s resource." % resource_name)
+      
+
 class TestUserResource(TestCase):
     def setUp(self):
         self.user_data = {
@@ -151,7 +167,7 @@ class TestDummy(TestCase):
         request = HttpRequest()
         request.method="GET"
 
-        response = dummy_res.get(request)
+        response = dummy_res.get(request,1)
         self.assertEqual(200, response.status_code)
         self.assertEqual(user_res._meta.examples['GET'], json.loads(response.content))
 

@@ -162,6 +162,8 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'frontend.context_processors.globals',
 )
 
+DUMMY_API = False
+
 try:
     from local_settings import *
     if TEST:

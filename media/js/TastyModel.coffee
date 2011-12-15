@@ -3,9 +3,8 @@ define ['api'], (api) ->
     class TastyModel extends Backbone.Model
 
         url : ->
-            url = api.getResourceUrl(@constructor.resourceName)
-            if @id
-                url += "#{@id}/"
-            return url
+            url = super()
+            if not url
+                return api.getResourceUrl(@constructor.resourceName)
 
     return TastyModel
