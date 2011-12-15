@@ -1,6 +1,0 @@
-[submodule "django-tastypie"]
-	path = lib/django-tastypie
-	url = https://github.com/toastdriven/django-tastypie
-[submodule "lib/django-json-rpc"]
-	path = lib/django-json-rpc
-	url = https://github.com/samuraisam/django-json-rpc.git
