@@ -97,6 +97,20 @@ def install():
     install_nodejs()
     #test()
 
+def configure_mysql():
+    sudo("apt-get install mysql-server python-mysqldb")
+    with cd("project"):
+        run("rm -rf local*")
+        run("./django-create-local-settings")
+        run("./django-add-db")
+        run("./mysql-create-djangouser")
+
+def quickstart():
+    install()
+    configure_mysql()
+    run_development()
+
+
 def run_development():
     with cd("project"):
         run("python manage.py runserver 0.0.0.0:8000")
