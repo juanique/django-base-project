@@ -13,6 +13,7 @@ from django.test import Client
 from dummy import DummyResource, Dummy
 from resources import UserResource, Api
 import json
+import settings
 
 
 class SimpleTest(TestCase):
@@ -185,32 +186,6 @@ class TestDummy(TestCase):
         response = dummy_res.post(request)
         self.assertEqual(201, response.status_code)
         self.assertEqual("",response.content)
-
-
-class TestUserProfile(TestCase):
-
-    def test_resource(self):
-        client = Client()
-
-        user_data = dict(UserResource()._meta.examples['POST'])
-        user_data['facebook_id'] = 555
-
-        post_response = client.post('/api/resources/klooffuser/',
-                json.dumps(user_data),
-                'application/json')
-
-        self.assertEqual(post_response.status_code, 201)
-
-        get_response = client.get('/api/resources/klooffuser/')
-        response_dict = json.loads(get_response.content)
-
-        kloofuser_dict = response_dic['object'][0]
-        kloofuser_keys = kloofuser_dict.keys()
-
-        self.assertTrue('username' in kloofuser_keys)
-        self.assertTrue('facebook_id' in kloofuser_keys)
-        self.assertEqual(555, kloofuser_dict['facebook_id'])
-
 
 
 '''

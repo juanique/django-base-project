@@ -109,7 +109,8 @@ def configure_mysql():
 def quickstart():
     install()
     configure_mysql()
-    run_development()
+    info()
+    test()
 
 
 def run_development():

@@ -6,7 +6,6 @@ from tastypie import fields
 from tastypie.api import Api as TastypieApi
 from api.helpers import FieldsValidation
 import settings
-from api.models import Pet
 import json
 
 class UserValidation(FieldsValidation):
@@ -37,48 +36,6 @@ class UserValidation(FieldsValidation):
             return True, ""
         return True, ""
 
-class KlooffUser(object):
-    def __init__(self,initial=None):
-        self.__dict__['data'] = {}
-        if hasattr(initial, 'items'):
-            self,__dict__['data'] = initial
-    def __getattr__(self,name):
-        self._data.get(name,None)
-    def __setattr__(self,name,value):
-        self._data[name] = value
-    def to_dict():
-        return self._data
-
-class KlooffUserResource(Resource):
-    uid=fields.CharField(attribute='uid')
-    
-    class Meta:
-        resource_name='KlooffUser'
-        authorization = Authorization()
-
-    def get_resource_uri(self,bundle_or_obj):
-        kwargs = {}
-        kwargs['resource_name'] = self._meta.resource_name
-        if isinstance(bundle_or_obj,Bundle):
-            kwargs['pk'] = bundle_or_obj.obj.uid
-        else:
-            kwargs['pk'] = bundle_or_obj.uid
-        return self._build_reverse_url("api_dispatch_detail",**kwargs)
-    def get_object_list(self, request):
-        users=User.objects.all()
-        result=[]
-        result.append('test')
-        return result
-    def obj_get_list(self,request=None,**kwargs):
-        return self.get_object_list(request)
-    def obj_create(self, bundle, request=None, **kwargs):
-        bundle.obj=KlooffUser(initial=kwargs)
-        bundle=self.full_hydrate(bundle)
-        return bundle
-    def obj_get(self,request=None,**kwargs):
-        initial={}
-        initial.append(name='jia200x')
-        return KlooffUser(initial=initial)
 
 class UserResource(ModelResource):
     username = fields.CharField(attribute='username', unique=True)
@@ -135,8 +92,7 @@ class Api:
         self.tastypieApi = TastypieApi(api_name='resources')
         self.resources = {
             'user' : UserResource(), 
-            'pet'  : PetResource(),
-            'klooffuser' : KlooffUserResource(), 
+
         }
 
         self.registerResources()
@@ -166,10 +122,3 @@ class Api:
         bundle = resource.build_bundle(obj=obj, request=request)
         bundle = resource.full_dehydrate(bundle)
         return bundle.data
-
-class PetResource(ModelResource):
-    class Meta:
-        queryset = Pet.objects.all()
-        resource_name = 'pet'
-        fields = ['name']
-        #allowed_methods = ['get']
