@@ -96,3 +96,7 @@ def install():
     install_tastypie()
     install_nodejs()
     #test()
+
+def run_development():
+    with cd("project"):
+        run("python manage.py runserver 0.0.0.0:80000")
