@@ -1,0 +1,152 @@
+The requirements file format
+============================
+
+The requirements file is a way to get pip to install specific packages
+to make up an *environment*.  This document describes that format.  To
+read about *when* you should use requirement files, see `Requirements
+Files <./#requirements-files>`_.
+
+Each line of the requirements file indicates something to be
+installed.  For example::
+
+    MyPackage==3.0
+
+tells pip to install the 3.0 version of MyPackage.  
+
+You can also install a package in an "editable" form.  This puts the
+source code into ``src/distname`` (making the name lower case) and
+runs ``python setup.py develop`` on the package.  To indicate
+editable, use ``-e``, like::
+
+    -e svn+http://svn.myproject.org/svn/MyProject/trunk#egg=MyProject
+
+The ``#egg=MyProject`` part is important, because while you can
+install simply given the svn location, the project name is useful in
+other places.
+
+You can also specify the egg name for a non-editable url. This is useful to
+point to HEAD locations on the local filesystem:
+
+    file:///path/to/your/lib/project#egg=MyProject
+
+or relative paths:
+
+    file:../../lib/project#egg=MyProject
+
+If you need to give pip (and by association easy_install) hints
+about where to find a package, you can use the ``-f``
+(``--find-links``) option, like::
+
+    $ pip -f http://someserver.org/index-of-packages MyPackage==3.0
+
+Pip will then look for a link at http://someserver.org/index-of-packages
+that matches version ``3.0`` of ``MyPackage`` -- the link should be
+like ``MyPackage-3.0.tar.gz``.
+
+And if you want to install from a tarball or zip file with a direct link,
+you don't need ``-f`` option, you just need to pass the absolute url, like::
+
+    $ pip install http://someserver.org/packages/MyPackage-3.0.tar.gz
+
+
+Version Control
+---------------
+
+Right now pip knows of the following major version control systems:
+
+Subversion
+~~~~~~~~~~
+
+Pip supports the URL schemes ``svn``, ``svn+svn``, ``svn+http``, ``svn+https``, ``svn+ssh``.
+You can also give specific revisions to an SVN URL, like::
+
+    -e svn+svn://svn.myproject.org/svn/MyProject#egg=MyProject
+    -e svn+http://svn.myproject.org/svn/MyProject/trunk@2019#egg=MyProject
+
+which will check out revision 2019.  ``@{20080101}`` would also check
+out the revision from 2008-01-01. You can only check out specific
+revisions using ``-e svn+...``.
+
+Git
+~~~
+
+Pip currently supports cloning over ``git``, ``git+http`` and ``git+ssh``::
+
+    -e git://git.myproject.org/MyProject.git#egg=MyProject
+    -e git+http://git.myproject.org/MyProject/#egg=MyProject
+    -e git+ssh://git@myproject.org/MyProject/#egg=MyProject
+
+Passing branch names, a commit hash or a tag name is also possible:: 
+
+    -e git://git.myproject.org/MyProject.git@master#egg=MyProject
+    -e git://git.myproject.org/MyProject.git@v1.0#egg=MyProject
+    -e git://git.myproject.org/MyProject.git@da39a3ee5e6b4b0d3255bfef95601890afd80709#egg=MyProject
+
+Mercurial
+~~~~~~~~~
+
+The supported schemes are: ``hg+http``, ``hg+https``,
+``hg+static-http`` and ``hg+ssh``::
+
+    -e hg+http://hg.myproject.org/MyProject/#egg=MyProject
+    -e hg+https://hg.myproject.org/MyProject/#egg=MyProject
+    -e hg+ssh://hg@myproject.org/MyProject/#egg=MyProject
+
+You can also specify a revision number, a revision hash, a tag name or a local
+branch name::
+
+    -e hg+http://hg.myproject.org/MyProject/@da39a3ee5e6b#egg=MyProject
+    -e hg+http://hg.myproject.org/MyProject/@2019#egg=MyProject
+    -e hg+http://hg.myproject.org/MyProject/@v1.0#egg=MyProject
+    -e hg+http://hg.myproject.org/MyProject/@special_feature#egg=MyProject
+
+Bazaar
+~~~~~~
+
+Pip supports Bazaar using the ``bzr+http``, ``bzr+https``, ``bzr+ssh``,
+``bzr+sftp`` and ``bzr+ftp`` schemes::
+
+    -e bzr+http://bzr.myproject.org/MyProject/trunk/#egg=MyProject
+    -e bzr+sftp://user@myproject.org/MyProject/trunk/#egg=MyProject
+    -e bzr+ssh://user@myproject.org/MyProject/trunk/#egg=MyProject
+    -e bzr+ftp://user@myproject.org/MyProject/trunk/#egg=MyProject
+
+Tags or revisions can be installed like this::
+
+    -e bzr+https://bzr.myproject.org/MyProject/trunk/@2019#egg=MyProject
+    -e bzr+http://bzr.myproject.org/MyProject/trunk/@v1.0#egg=MyProject
+
+Recursive Requirements
+----------------------
+
+If you wish, you can also refer to other requirements files, like::
+
+    -r Pylons-requirements.txt
+
+This gives you a way of abstracting out sets of requirements.  This
+isn't, however, very friendly with `frozen requirements
+<./#freezing-requirements>`_, as everything in
+``Pylons-requirements.txt`` will show up in your frozen file.
+
+Indexes, find-links
+-------------------
+
+You can also provide values for the ``--index-url`` and ``--find-links``
+options in your requirement files, like::
+
+    --index-url http://example.com/private-pypi/
+
+Note that using ``--index-url`` removes the use of `PyPI
+<http://pypi.python.org>`_, while using ``--extra-index-url`` will add
+additional indexes.
+
+``--find-links`` is more ad-hoc; instead of a complete "index", you
+only need an HTML page of links to available packages.  Simply by
+putting all your private packages in a directory and using the Apache
+auto-index, you can publish your packages so pip can find them.
+``--find-links`` is always additive; pip looks at everything it can
+find.  Use it like::
+
+    --find-links http://example.com/private-packages/
+
+Note that all these options must be on a line of their own.
