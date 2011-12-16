@@ -1,2 +1,6 @@
 *.pyc
 local_*
+
+build/
+dist/
+*.egg*/
