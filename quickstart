@@ -1,4 +1,6 @@
 sudo apt-get install python-setuptools python-dev build-essential
-sudo easy_install pip
+cd lib/pip-1.0.2
+sudo python setup.py install
+cd ../..
 sudo pip install fabric
 fab local quickstart
