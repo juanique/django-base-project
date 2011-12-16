@@ -99,4 +99,4 @@ def install():
 
 def run_development():
     with cd("project"):
-        run("python manage.py runserver 0.0.0.0:80000")
+        run("python manage.py runserver 0.0.0.0:8000")
