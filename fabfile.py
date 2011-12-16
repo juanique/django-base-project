@@ -104,6 +104,7 @@ def configure_mysql():
         run("./django-create-local-settings")
         run("./django-add-db")
         run("./mysql-create-djangouser")
+        run("python manage.py syncdb")
 
 def quickstart():
     install()
