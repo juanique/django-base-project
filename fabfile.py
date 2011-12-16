@@ -39,6 +39,18 @@ def install_nodejs():
     else:
         print "Node.js already installed"
 
+    install_npm()
+
+def install_npm():
+    with settings(warn_only=True):
+        result = run("npm --version")
+
+    if result.failed:
+        sudo("apt-get install curl")
+        run("curl http://npmjs.org/install.sh | sh")
+    else:
+        print "npm already installed"
+
 def install_tastypie():
     try:
         import tastypie
