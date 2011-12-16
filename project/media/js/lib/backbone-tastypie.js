@@ -21,7 +21,7 @@
 			// Set up 'success' handling
 			dfd.done( options.success );
 			options.success = function( resp, status, xhr ) {
-				// If create is successful but doesn't return a response, fire an extra GET.
+				// If create/update is successful but doesn't return a response, fire an extra GET.
 				// Otherwise, resolve the deferred (which triggers the original 'success' callbacks).
 				if ( xhr.status === 201 && !resp ) { // 201 CREATED; response null or empty.
 					var location = xhr.getResponseHeader( 'Location' );

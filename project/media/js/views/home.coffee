@@ -6,5 +6,3 @@ require ['collections','models'], (collections, models) ->
 
     window.users = users
     window.User = models.User
-
-

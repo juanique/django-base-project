@@ -1,5 +1,6 @@
 import sys
 from fabric_helpers import sudo, cd, run
+from fabric.api import settings
 
 def local():
     print "Running in local mode."
@@ -8,8 +9,8 @@ def remote():
     print "Running in remote mode."
 
 def info():
-    import project.settings as settings
-    if settings.DEBUG:
+    import project.settings as django_settings
+    if django_settings.DEBUG:
         print "Server is in development mode."
     else:
         print "Server is in production mode."
@@ -21,6 +22,22 @@ def test():
 def init_submodules():
     run("git submodule init")
     run("git submodule update")
+
+def install_nodejs():
+    NODE_VERSION = "v0.6.5"
+
+    with settings(warn_only=True):
+        result = run("node --version")
+        
+    if result.failed:
+        with cd("lib/node"):
+            run("git checkout %s" % NODE_VERSION)
+            sudo("apt get install libssl-dev openssl")
+            run("./configure")
+            run("make")
+            sudo("make install")
+    else:
+        print "Node.js already installed"
 
 def install_tastypie():
     try:
