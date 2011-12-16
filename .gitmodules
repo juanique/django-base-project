@@ -7,3 +7,6 @@
 [submodule "lib/node"]
 	path = lib/node
 	url = https://github.com/joyent/node.git
+[submodule "lib/fabric"]
+	path = lib/fabric
+	url = git://fabfile.org/fabric.git

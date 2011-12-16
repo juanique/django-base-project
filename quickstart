@@ -2,5 +2,13 @@ sudo apt-get install python-setuptools python-dev build-essential
 cd lib/pip-1.0.2
 sudo python setup.py install
 cd ../..
-sudo pip install fabric
+
+git submodule init
+git submodule update
+
+cd lib/fabric
+git checkout 1.3.3
+sudo python setup.py install
+cd ../..
+
 fab local quickstart
