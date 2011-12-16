@@ -32,7 +32,7 @@ def install_nodejs():
     if result.failed:
         with cd("lib/node"):
             run("git checkout %s" % NODE_VERSION)
-            sudo("apt get install libssl-dev openssl")
+            sudo("apt-get install libssl-dev openssl")
             run("./configure")
             run("make")
             sudo("make install")
@@ -72,4 +72,5 @@ def install():
     install_django()
     install_jsonrpc()
     install_tastypie()
+    install_nodejs()
     #test()
