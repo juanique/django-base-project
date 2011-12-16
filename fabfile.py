@@ -51,6 +51,16 @@ def install_npm():
     else:
         print "npm already installed"
 
+def install_coffee():
+    with settings(warn_only=True):
+        result = run("coffee --version")
+
+    if result.failed:
+        sudo("npm install -g coffee-script")
+    else:
+        print "Coffeescript already installed"
+
+
 def install_tastypie():
     try:
         import tastypie
