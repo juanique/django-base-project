@@ -15,13 +15,12 @@
 	 */
 	Backbone.oldSync = Backbone.sync;
 	Backbone.sync = function( method, model, options ) {
-		if ( method === 'create' ) {
+		if ( method === 'create' || method === "update" ) {
 			var dfd = new $.Deferred();
 			
 			// Set up 'success' handling
 			dfd.done( options.success );
 			options.success = function( resp, status, xhr ) {
-                debugger;
 				// If create is successful but doesn't return a response, fire an extra GET.
 				// Otherwise, resolve the deferred (which triggers the original 'success' callbacks).
 				if ( xhr.status === 201 && !resp ) { // 201 CREATED; response null or empty.
@@ -31,8 +30,14 @@
 						   success: dfd.resolve,
 						   error: dfd.reject
 						});
-				}
-				else {
+				}else if( xhr.status === 204 && !resp){
+					return $.ajax( {
+						   url: model.url(),
+						   success: dfd.resolve,
+						   error: dfd.reject
+						});
+
+                }else{
 					return dfd.resolveWith( options.context || options, [ resp, status, xhr ] );
 				}
 			};

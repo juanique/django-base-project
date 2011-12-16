@@ -5,6 +5,7 @@ define ['api','TastyModel'], (api,TastyModel) ->
 
         @parse : (data) ->
             delete data['password'] if data['password'] isnt undefined
+            return data
 
         parse : (data) ->
             return super(User.parse(data))

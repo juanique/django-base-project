@@ -91,23 +91,26 @@ class TestResources(TestCase):
         for resource_name, resource in api.resources.items():
             try:
                 get_example = resource._meta.examples['GET']
-            except KeyError:
+            except AttributeError, KeyError:
                 self.assertTrue(False,"Missing example GET data for %s resource." % resource_name)
             try:
                 get_example = resource._meta.examples['POST']
-            except KeyError:
+            except AttributeError, KeyError:
                 self.assertTrue(False,"Missing example POST data for %s resource." % resource_name)
       
 
 class TestUserResource(TestCase):
     def setUp(self):
-        self.user_data = {
-            "username":"godinez5",
-            "password":"mypassword",
-            "first_name" : "juanelo", 
-            "last_name" : "godinez", 
-            "email" : "juanelo@godinez.cl"
-        }
+        if settings.DUMMY_API:
+            self.user_data = (UserResource()._meta.example['POST'])
+        else:
+            self.user_data = {
+                "username":"godinez5",
+                "password":"mypassword",
+                "first_name" : "juanelo", 
+                "last_name" : "godinez", 
+                "email" : "juanelo@godinez.cl"
+            }
 
     def test_missing_email(self):
         client = Client()
@@ -196,7 +199,7 @@ class TestUserProfile(TestCase):
                 json.dumps(user_data),
                 'application/json')
 
-        self.assertEqual(post_response.status, 201)
+        self.assertEqual(post_response.status_code, 201)
 
         get_response = client.get('/api/resources/klooffuser/')
         response_dict = json.loads(get_response.content)
