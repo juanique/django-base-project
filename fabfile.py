@@ -1,5 +1,4 @@
 import sys
-import project.settings as settings
 from fabric_helpers import sudo, cd, run
 
 def local():
@@ -9,6 +8,7 @@ def remote():
     print "Running in remote mode."
 
 def info():
+    import project.settings as settings
     if settings.DEBUG:
         print "Server is in development mode."
     else:
@@ -27,6 +27,7 @@ def install_tastypie():
         import tastypie
         print "tastypie is installed - version %s." % str(tastypie.__version__)
     except ImportError, e:
+        sudo("pip install mimeparse")
         with cd('lib/django-tastypie'):
             sudo("python setup.py install")
 
@@ -54,4 +55,4 @@ def install():
     install_django()
     install_jsonrpc()
     install_tastypie()
-    test()
+    #test()

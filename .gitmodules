@@ -4,3 +4,6 @@
 [submodule "lib/django-tastypie"]
 	path = lib/django-tastypie
 	url = https://github.com/toastdriven/django-tastypie.git
+[submodule "lib/node"]
+	path = lib/node
+	url = https://github.com/joyent/node.git
